@@ -3,7 +3,8 @@ import Contact from "../model/contactModel.js";
 export const createContact = async (req, res) => {
   try {
     const { firstName, lastName, phone } = req.body;
-    const newContact = new Contact({ firstName, lastName, phone });
+    const userId = req.user.id;
+    const newContact = new Contact({ firstName, lastName, phone, userId });
     const savedData = await newContact.save();
     res.status(200).json(savedData);
   } catch (error) {
@@ -14,12 +15,15 @@ export const createContact = async (req, res) => {
 
 export const getAllContacts = async (req, res) => {
   try {
-    const contactData = await Contact.find();
+    const userId = req.user.id;
+    const contactData = await Contact.find({ userId: userId });
     if (!contactData || contactData.length === 0) {
-      return res.status(404).json({ message: "Les données de contact n'ont pas été trouvées ." });
+      return res.status(404).json({ message: "Pas de contact pour cet utilisateur" });
     }
     res.status(200).json(contactData);
   } catch (error) {
+    console.error("erreur dans getAllContacts :", error);
+    
     res.status(500).json({ errorMessage: error.message });
   }
 };

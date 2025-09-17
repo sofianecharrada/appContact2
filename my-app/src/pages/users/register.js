@@ -31,7 +31,7 @@ const Register = () => {
       setError(null);
 
       setTimeout(() => {
-        navigate("/contacts"); 
+        navigate("/login"); 
       }, 1500);
     } catch (err) {
       console.error("Erreur serveur :", err);

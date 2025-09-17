@@ -9,6 +9,7 @@ const SuppressionContact = () => {
 
   useEffect(() => {
     const fetchContacts = async () => {
+      const token = localStorage.getItem("token");
       try {
         const response = await fetch(
           `http://localhost:8000/api/contact/${params.id}`,
@@ -16,6 +17,7 @@ const SuppressionContact = () => {
             method: "DELETE",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
           }
         );

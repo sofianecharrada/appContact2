@@ -14,6 +14,11 @@ const contactSchema = new mongoose.Schema({
         required: true,
         match: [/^\+?[0-9]{7,15}$/, "Numéro de téléphone invalide"]
 
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
     }
 }
 );

@@ -13,8 +13,8 @@ import { requireAuth } from "../middlewares/auth.middleware.js";
 const routeContact = express.Router();
 
 
-routeContact.post("/contacts", createContact);
-routeContact.get("/contacts",  getAllContacts)
+routeContact.post("/contacts", requireAuth, createContact);
+routeContact.get("/contacts",  requireAuth, getAllContacts)
 routeContact.get("/contact/:id",  getContactById);
 routeContact.patch("/contact/:id" , updateContact);
 routeContact.delete("/contact/:id", deleteContact);

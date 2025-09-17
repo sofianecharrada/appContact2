@@ -12,11 +12,13 @@ const CreationContact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const token = localStorage.getItem("token");
     try {
       const response = await fetch("http://localhost:8000/api/contacts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
 
         body: JSON.stringify({ firstName, lastName, phone }),
@@ -24,7 +26,7 @@ const CreationContact = () => {
 
       const data = await response.json();
       if (!response.ok) {
-        setError(data.message || "Erreur lors de la création du contact.");
+        setError(data.message || "Il n'y a pas de contact.");
         return;
       }
 

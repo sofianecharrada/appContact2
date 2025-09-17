@@ -26,9 +26,4 @@ export const requireAuth = (req, res, next) => {
     next(error);
   }
 
-  if (response.status === 401) {
-  localStorage.removeItem("token");
-  navigate("/login");
-}
-
 };
