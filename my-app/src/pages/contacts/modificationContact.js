@@ -7,6 +7,7 @@ const ModificationContact = () => {
   const [phone, setPhone] = useState("");
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const navigate = useNavigate();
   const params = useParams();
@@ -16,7 +17,7 @@ const ModificationContact = () => {
       const token = localStorage.getItem("token");
       try {
         const response = await fetch(
-          `http://localhost:8000/api/contact/${params.id}`,
+          `${API_URL}/api/contact/${params.id}`,
           {
             method: "GET",
             headers: {
