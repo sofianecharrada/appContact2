@@ -6,8 +6,10 @@ export const createContact = async (req, res) => {
     const userId = req.user.id;
     const newContact = new Contact({ firstName, lastName, phone, userId });
     const savedData = await newContact.save();
-    res.status(200).json(savedData);
+    res.status(201).json(savedData);
   } catch (error) {
+    console.error("erreur createContact ", error);
+    
     res.status(500).json({ errorMessage: error.message });
   }
 

@@ -7,189 +7,21 @@ info:
 servers:
   - url: http://localhost:8000/api
 
-paths:
-  # ----------- Routes Utilisateurs -----------
-  /auth/register:
-    post:
-      summary: Enregistrer un nouvel utilisateur
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserInput'
-      responses:
-        '200':
-          description: Utilisateur créé avec succès
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-
-  /users:
-    get:
-      summary: Récupérer tous les utilisateurs
-      responses:
-        '200':
-          description: Liste des utilisateurs
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
-
-  /user/{id}:
-    get:
-      summary: Récupérer un utilisateur par ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-          description: ID de l'utilisateur
-      responses:
-        '200':
-          description: Utilisateur trouvé
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '404':
-          description: Utilisateur non trouvé
-
-  /update/user/{id}:
-    patch:
-      summary: Mettre à jour un utilisateur par ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-          description: ID de l'utilisateur
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserInput'
-      responses:
-        '200':
-          description: Utilisateur mis à jour
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '404':
-          description: Utilisateur non trouvé
-
-  /delete/user/{id}:
-    delete:
-      summary: Supprimer un utilisateur par ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-          description: ID de l'utilisateur
-      responses:
-        '200':
-          description: Utilisateur supprimé avec succès
-        '404':
-          description: Utilisateur non trouvé
-
-  # ----------- Routes Contacts -----------
-  /contacts:
-    get:
-      summary: Récupérer tous les contacts
-      responses:
-        '200':
-          description: Liste des contacts
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Contact'
-    post:
-      summary: Créer un nouveau contact
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ContactInput'
-      responses:
-        '200':
-          description: Contact créé
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Contact'
-
-  /contact/{id}:
-    get:
-      summary: Récupérer un contact par ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-          description: ID du contact
-      responses:
-        '200':
-          description: Contact trouvé
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Contact'
-        '404':
-          description: Contact non trouvé
-    patch:
-      summary: Mettre à jour un contact par ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-          description: ID du contact
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ContactInput'
-      responses:
-        '200':
-          description: Contact mis à jour
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Contact'
-        '404':
-          description: Contact non trouvé
-    delete:
-      summary: Supprimer un contact par ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-          description: ID du contact
-      responses:
-        '200':
-          description: Contact supprimé avec succès
-        '404':
-          description: Contact non trouvé
-
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Une erreur est survenue"
+
     User:
       type: object
       properties:
@@ -202,7 +34,6 @@ components:
         email:
           type: string
           example: "sofiane@example.com"
-        # Ajoute d’autres champs si besoin
 
     UserInput:
       type: object
@@ -236,6 +67,9 @@ components:
         phone:
           type: string
           example: "+33612345678"
+        userId:
+          type: string
+          example: "60c72b2f9b1d4c3a4f9f8a67"
 
     ContactInput:
       type: object
@@ -253,3 +87,299 @@ components:
         - firstName
         - lastName
         - phone
+
+paths:
+  # ----------- Routes Auth -----------
+
+  /auth/register:
+    post:
+      summary: Enregistrer un nouvel utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '200':
+          description: Utilisateur créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Données invalides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/login:
+    post:
+      summary: Connexion utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "sofiane@example.com"
+                password:
+                  type: string
+                  example: "monMotDePasse123"
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Connexion réussie avec token JWT
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '400':
+          description: Email ou mot de passe invalide
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ----------- Routes Utilisateurs -----------
+
+  /users:
+    get:
+      summary: Récupérer tous les utilisateurs
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Liste des utilisateurs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          description: Non autorisé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /user/{id}:
+    get:
+      summary: Récupérer un utilisateur par ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID de l'utilisateur
+      responses:
+        '200':
+          description: Utilisateur trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Utilisateur non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorisé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /update/user/{id}:
+    patch:
+      summary: Mettre à jour un utilisateur par ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID de l'utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '200':
+          description: Utilisateur mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Utilisateur non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorisé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /delete/user/{id}:
+    delete:
+      summary: Supprimer un utilisateur par ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID de l'utilisateur
+      responses:
+        '200':
+          description: Utilisateur supprimé avec succès
+        '404':
+          description: Utilisateur non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorisé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ----------- Routes Contacts -----------
+
+  /contacts:
+    get:
+      summary: Récupérer tous les contacts
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Liste des contacts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contact'
+        '401':
+          description: Non autorisé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Créer un nouveau contact
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactInput'
+      responses:
+        '201':
+          description: Contact créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+        '400':
+          description: Données invalides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Non autorisé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /contact/{id}:
+    get:
+      summary: Récupérer un contact par ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type:
