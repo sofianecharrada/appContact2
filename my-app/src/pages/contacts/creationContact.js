@@ -7,7 +7,6 @@ const CreationContact = () => {
   const [phone, setPhone] = useState("");
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
-  const API_URL = process.env.REACT_APP_API_URL;
 
   const navigate = useNavigate();
 
@@ -15,7 +14,7 @@ const CreationContact = () => {
     e.preventDefault();
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`${API_URL}/api/contacts`, {
+      const response = await fetch("http://localhost:8000/api/contacts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

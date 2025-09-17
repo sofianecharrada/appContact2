@@ -6,14 +6,13 @@ const SuppressionContact = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchContacts = async () => {
       const token = localStorage.getItem("token");
       try {
         const response = await fetch(
-          `${API_URL}/api/contact/${params.id}`,
+          `http://localhost:8000/api/contact/${params.id}`,
           {
             method: "DELETE",
             headers: {

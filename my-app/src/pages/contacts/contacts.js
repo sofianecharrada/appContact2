@@ -4,13 +4,12 @@ import { Link } from "react-router-dom";
 const ContactsList = () => {
   const [contacts, setContacts] = useState([]);
   const [error, setError] = useState(null);
-  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchContacts = async () => {
       const token = localStorage.getItem("token");
       try {
-        const response = await fetch(`${API_URL}/api/contacts`, {
+        const response = await fetch("http://localhost:8000/api/contacts", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
