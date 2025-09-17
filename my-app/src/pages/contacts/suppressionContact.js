@@ -32,6 +32,7 @@ const SuppressionContact = () => {
         }, 1500);
       } catch (error) {
         console.error(error);
+
       }
     };
     fetchContacts();
@@ -42,6 +43,12 @@ const SuppressionContact = () => {
       {success && (
         <p style={{ color: "green", marginTop: "15px", textAlign: "center" }}>
           {success}
+        </p>
+        
+      )}
+       {error && (
+        <p style={{ color: "red", marginTop: "15px", textAlign: "center" }}>
+          {error}
         </p>
       )}
     </div>
