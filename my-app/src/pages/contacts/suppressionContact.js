@@ -36,7 +36,7 @@ const SuppressionContact = () => {
       }
     };
     fetchContacts();
-  }, [params.id]);
+  }, [navigate], [params.id]);
 
   return (
     <div>
